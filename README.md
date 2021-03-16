@@ -1,6 +1,6 @@
-##Implementation of TWINE: A lightweight block cipher in golang
+## Implementation of TWINE: A lightweight block cipher in golang
 
-##Usage
+## Usage
 * install Go
 * Run the program with "go run twine.go"
 * "E" to encrypt and "D" to decrypt
