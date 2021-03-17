@@ -352,7 +352,7 @@ func decrypt(C, key string, keySize int) string {
 	return string(Deciphered_text)
 }
 func checkKey(key string) bool {
-	if len(key) == 10 || len(key) == 16 {
+	if len(key) == 10+2 || len(key) == 16+2 {
 		return true
 	} else {
 		return false
@@ -374,7 +374,8 @@ func main() {
 		in := bufio.NewReader(os.Stdin)
 		P, _ = in.ReadString('\n')
 		fmt.Println("Enter Key")
-		fmt.Scanln(&key)
+		in = bufio.NewReader(os.Stdin)
+		key, _ = in.ReadString('\n')
 		if !(checkKey(key)) {
 			fmt.Println("Incorrect key length, please enter 10 char for 80 bits or 16 char for 128 bits")
 			os.Exit(1)
@@ -386,7 +387,8 @@ func main() {
 		fmt.Println("Enter Cipher Text")
 		fmt.Scanln(&C)
 		fmt.Println("Enter Key")
-		fmt.Scanln(&key)
+		in := bufio.NewReader(os.Stdin)
+		key, _ = in.ReadString('\n')
 		if !(checkKey(key)) {
 			fmt.Println("Incorrect key length, please enter 10 char for 80 bits or 16 char for 128 bits")
 			os.Exit(1)
@@ -400,20 +402,3 @@ func main() {
 	// fmt.Println("encdec", decrypt(encrypt("hello", "<o8~I{?3Uz", 80), "<o8~I{?3Uz", 80))
 	// fmt.Println("cipher", _decrypt("9843612ECAE79496", _key_schedule_80("3c6f387e497b3f33557a")))l
 }
-
-// fmt.Println(hex, reflect.TypeOf(hex))
-// fmt.Println("cipher text", _encrypt("68", _key_schedule_80("3c6f387e497b3f33557a")))
-// fmt.Println("plain text", _decrypt(_encrypt("1234567890123456", _key_schedule_80("3c6f387e497b3f33557a")), _key_schedule_80("3c6f387e497b3f33557a")))
-// fmt.Println("plain text", _decrypt("27520ACEE7F0EA0D", _key_schedule_80("3c6f387e497b3f33557a")))
-// C = C + hex
-// fmt.Println(C, reflect.TypeOf(C))
-// fmt.Println(_Rot16(test_rot))
-// output, err = strconv.ParseInt("3c6f387e497b3f33557a")
-// var key, ok = new(big.Int).SetString("3c6f387e497b3f33557a", 16)
-// fmt.Println(_get_4_bits(key, 4))
-// fmt.Println(ok, key)
-// key := big.Int(0x3c6f387e497b3f33557a)
-// var key big.Int = 0x3c6f387e497b3f33557a
-// var key, ok = new(big.Int).SetString("3c6f387e497b3f33557a", 16)
-// fmt.Println(key, ok, typeof)
-// fmt.Println(_key_schedule_80(key))
