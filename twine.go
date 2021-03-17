@@ -5,9 +5,11 @@ import (
 	"encoding/hex"
 	"fmt"
 	"math"
+	"math/rand"
 	"os"
 	"strconv"
 	"strings"
+	"time"
 )
 
 var (
@@ -352,11 +354,24 @@ func decrypt(C, key string, keySize int) string {
 	return string(Deciphered_text)
 }
 func checkKey(key string) bool {
-	if len(key) == 10+2 || len(key) == 16+2 {
+	if len(key) == 10 || len(key) == 16 {
 		return true
 	} else {
 		return false
 	}
+}
+func getKey(keySize int) string {
+	rand.Seed(time.Now().UnixNano())
+	chars := []rune("ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
+		"abcdefghijklmnopqrstuvwxyz" +
+		"0123456789")
+	length := keySize / 8
+	var b strings.Builder
+	for i := 0; i < length; i++ {
+		b.WriteRune(chars[rand.Intn(len(chars))])
+	}
+	str := b.String()
+	return str
 }
 func main() {
 
@@ -370,12 +385,25 @@ func main() {
 
 	if eOrD == "E" || eOrD == "e" {
 		var P string
+		var K string
 		fmt.Println("Enter Plain text")
 		in := bufio.NewReader(os.Stdin)
 		P, _ = in.ReadString('\n')
-		fmt.Println("Enter Key")
-		in = bufio.NewReader(os.Stdin)
-		key, _ = in.ReadString('\n')
+		fmt.Println("Press R to use random key or K to provide key")
+		fmt.Scanln(&K)
+		if K == "R" || K == "r" {
+			key = getKey(keySize)
+			fmt.Println("Key: ", key)
+		} else if K == "K" || K == "k" {
+			fmt.Println("Enter Key")
+			in = bufio.NewReader(os.Stdin)
+			key, _ = in.ReadString('\n')
+			key = key[0 : len(key)-2] // removing last 2 chars of string
+		} else {
+			fmt.Println("Invalid input")
+			os.Exit(1)
+		}
+
 		if !(checkKey(key)) {
 			fmt.Println("Incorrect key length, please enter 10 char for 80 bits or 16 char for 128 bits")
 			os.Exit(1)
