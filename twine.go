@@ -399,6 +399,7 @@ func main() {
 			in = bufio.NewReader(os.Stdin)
 			key, _ = in.ReadString('\n')
 			key = key[0 : len(key)-2] // removing last 2 chars of string
+
 		} else {
 			fmt.Println("Invalid input")
 			os.Exit(1)
@@ -417,6 +418,7 @@ func main() {
 		fmt.Println("Enter Key")
 		in := bufio.NewReader(os.Stdin)
 		key, _ = in.ReadString('\n')
+		key = key[0 : len(key)-2] // removing last 2 chars of string
 		if !(checkKey(key)) {
 			fmt.Println("Incorrect key length, please enter 10 char for 80 bits or 16 char for 128 bits")
 			os.Exit(1)
