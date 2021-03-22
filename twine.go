@@ -125,9 +125,9 @@ func _Rot4(bits []int) []int {
 	var rot = []int{bits[1], bits[2], bits[3], bits[0]}
 	return rot
 }
-func _Rot16(bits []int) []int {
+func _Rot16(bits []int, times int) []int {
 	var rot = []int{}
-	for i := 4; i < 20; i++ {
+	for i := 4; i < times; i++ {
 		rot = append(rot, bits[i])
 	}
 	rot = append(rot, bits[0], bits[1], bits[2], bits[3])
@@ -184,7 +184,7 @@ func _key_schedule_80(key string) [37][8]int {
 			WK0_to_WK19_80 = append(WK0_to_WK19_80, WK_80[j])
 		}
 
-		WK0_to_WK19_80 = _Rot16(WK0_to_WK19_80)
+		WK0_to_WK19_80 = _Rot16(WK0_to_WK19_80, 20)
 		for k := 0; k < 20; k++ {
 			WK_80[k] = WK0_to_WK19_80[k]
 		}
@@ -234,7 +234,7 @@ func _key_schedule_128(key string) [37][8]int {
 			WK0_to_WK31_128 = append(WK0_to_WK31_128, WK_128[j])
 		}
 
-		WK0_to_WK31_128 = _Rot16(WK0_to_WK31_128)
+		WK0_to_WK31_128 = _Rot16(WK0_to_WK31_128, 32)
 		for k := 0; k < 32; k++ {
 			WK_128[k] = WK0_to_WK31_128[k]
 		}
@@ -360,11 +360,15 @@ func checkKey(key string) bool {
 		return false
 	}
 }
+
+// TODO: whatis rune, strings.Builder, WriteRune etc.
 func getKey(keySize int) string {
 	rand.Seed(time.Now().UnixNano())
 	chars := []rune("ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
 		"abcdefghijklmnopqrstuvwxyz" +
 		"0123456789")
+		
+	// keySize is # obf bits, this function generates in bytes, so /8
 	length := keySize / 8
 	var b strings.Builder
 	for i := 0; i < length; i++ {
@@ -398,7 +402,7 @@ func main() {
 			fmt.Println("Enter Key")
 			in = bufio.NewReader(os.Stdin)
 			key, _ = in.ReadString('\n')
-			key = key[0 : len(key)-2] // removing last 2 chars of string
+			key = key[0 : len(key)-2] // remove '\n'
 
 		} else {
 			fmt.Println("Invalid input")
@@ -418,12 +422,13 @@ func main() {
 		fmt.Println("Enter Key")
 		in := bufio.NewReader(os.Stdin)
 		key, _ = in.ReadString('\n')
-		key = key[0 : len(key)-2] // removing last 2 chars of string
+		key = key[0 : len(key)-2] // removing last char of string, the '\n'
 		if !(checkKey(key)) {
 			fmt.Println("Incorrect key length, please enter 10 char for 80 bits or 16 char for 128 bits")
 			os.Exit(1)
 		}
-		fmt.Println("Plain Text", decrypt(C, key, keySize))
+		fmt.Println("Plain Text:")
+		fmt.Println(decrypt(C, key, keySize))
 	} else {
 		fmt.Println("Invalid Input")
 	}
